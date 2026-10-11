@@ -34,6 +34,7 @@ pipeline {
     }
 
     stages {
+
         stage('Show environment') {
             steps {
                 echo "FAVORITE_ARTIST = ${env.FAVORITE_ARTIST}"
@@ -70,34 +71,36 @@ pipeline {
         }
 
         stage('Input') {
+
+            input {
+                message 'Выберите любимого исполнителя'
+                ok 'Продолжить'
+
+                parameters {
+                    choice(
+                        name: 'NEW_ARTIST',
+                        choices: [
+                            'Artur Pirozhkov',
+                            'Рокеры',
+                            'Попсы'
+                        ],
+                        description: 'Выберите новое значение'
+                    )
+                }
+            }
+
             steps {
                 script {
-                    def selectedArtist = input(
-                        message: 'Выберите любимого исполнителя',
-                        ok: 'Продолжить',
-                        parameters: [
-                            [
-                                $class: 'ChoiceParameterDefinition',
-                                name: 'NEW_ARTIST',
-                                choices: "Artur Pirozhkov\nРокеры\nПопсы",
-                                description: 'Выберите новое значение'
-                            ]
-                        ]
-                    )
-
-                    env.SELECTED_ARTIST = selectedArtist.toString()
-
-                    echo "Выбранный исполнитель: ${env.SELECTED_ARTIST}"
+                    env.SELECTED_ARTIST = env.NEW_ARTIST
                 }
+
+                echo "Выбранный исполнитель: ${env.SELECTED_ARTIST}"
             }
         }
 
         stage('Rockers') {
             when {
-                environment(
-                    name: 'SELECTED_ARTIST',
-                    value: 'Рокеры'
-                )
+                environment name: 'SELECTED_ARTIST', value: 'Рокеры'
             }
 
             steps {
@@ -107,10 +110,7 @@ pipeline {
 
         stage('Pop') {
             when {
-                environment(
-                    name: 'SELECTED_ARTIST',
-                    value: 'Попсы'
-                )
+                environment name: 'SELECTED_ARTIST', value: 'Попсы'
             }
 
             steps {
@@ -120,10 +120,7 @@ pipeline {
 
         stage('Artur Pirozhkov') {
             when {
-                environment(
-                    name: 'SELECTED_ARTIST',
-                    value: 'Artur Pirozhkov'
-                )
+                environment name: 'SELECTED_ARTIST', value: 'Artur Pirozhkov'
             }
 
             steps {
