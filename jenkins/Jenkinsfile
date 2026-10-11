@@ -78,64 +78,24 @@ pipeline {
                         message: 'Измените параметры',
                         ok: 'Продолжить',
                         parameters: [
-                            choice(
+                            [
+                                $class: 'ChoiceParameterDefinition',
                                 name: 'NEW_ARTIST',
-                                choices: [
-                                    'Artur Pirozhkov',
-                                    'Рокеры',
-                                    'Попсы'
-                                ],
+                                choices: "Artur Pirozhkov\nРокеры\nПопсы",
                                 description: 'Выберите любимого исполнителя'
-                            ),
-
-                            choice(
+                            ],
+                            [
+                                $class: 'ChoiceParameterDefinition',
                                 name: 'NEW_GENRE',
-                                choices: [
-                                    'Pop',
-                                    'Rock',
-                                    'Rap'
-                                ],
+                                choices: "Pop\nRock\nRap",
                                 description: 'Выберите жанр'
-                            )
+                            ]
                         ]
                     )
 
-                    env.SELECTED_ARTIST = userChoice['NEW_ARTIST']
-                    env.SELECTED_GENRE = userChoice['NEW_GENRE']
-
-                    echo "Выбранный исполнитель: ${env.SELECTED_ARTIST}"
-                    echo "Выбранный жанр: ${env.SELECTED_GENRE}"
+                    echo "INPUT RESULT = ${userChoice}"
+                    echo "INPUT CLASS = ${userChoice?.getClass()?.getName()}"
                 }
-            }
-        }
-
-        stage('Rockers') {
-            when {
-                environment name: 'SELECTED_ARTIST', value: 'Рокеры'
-            }
-
-            steps {
-                echo 'Играет рок-группа!'
-            }
-        }
-
-        stage('Pop') {
-            when {
-                environment name: 'SELECTED_ARTIST', value: 'Попсы'
-            }
-
-            steps {
-                echo 'Играет поп-группа!'
-            }
-        }
-
-        stage('Artur Pirozhkov') {
-            when {
-                environment name: 'SELECTED_ARTIST', value: 'Artur Pirozhkov'
-            }
-
-            steps {
-                echo 'Играет Artur Pirozhkov!'
             }
         }
     }
