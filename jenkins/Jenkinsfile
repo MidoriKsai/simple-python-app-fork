@@ -95,9 +95,42 @@ pipeline {
             }
         }
 
-        stage('After Input') {
+        stage('Rockers') {
+            when {
+                environment(
+                    name: 'SELECTED_ARTIST',
+                    value: 'Рокеры'
+                )
+            }
+
             steps {
-                echo "Дальнейшие стадии используют: ${env.SELECTED_ARTIST}"
+                echo 'Играет рок-группа!'
+            }
+        }
+
+        stage('Pop') {
+            when {
+                environment(
+                    name: 'SELECTED_ARTIST',
+                    value: 'Попсы'
+                )
+            }
+
+            steps {
+                echo 'Играет поп-группа!'
+            }
+        }
+
+        stage('Artur Pirozhkov') {
+            when {
+                environment(
+                    name: 'SELECTED_ARTIST',
+                    value: 'Artur Pirozhkov'
+                )
+            }
+
+            steps {
+                echo 'Играет Artur Pirozhkov!'
             }
         }
     }
