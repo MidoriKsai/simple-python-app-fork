@@ -31,7 +31,6 @@ pipeline {
         ARTIST_CREDENTIALS = credentials('artist-credentials')
 
         SELECTED_ARTIST = ''
-        SELECTED_GENRE = ''
     }
 
     stages {
@@ -74,8 +73,8 @@ pipeline {
         stage('Input') {
             steps {
                 script {
-                    def userChoice = input(
-                        message: 'Измените параметры',
+                    def selectedArtist = input(
+                        message: 'Измените любимого исполнителя',
                         ok: 'Продолжить',
                         parameters: [
                             [
@@ -83,24 +82,13 @@ pipeline {
                                 name: 'NEW_ARTIST',
                                 choices: "Artur Pirozhkov\nРокеры\nПопсы",
                                 description: 'Выберите любимого исполнителя'
-                            ],
-                            [
-                                $class: 'ChoiceParameterDefinition',
-                                name: 'NEW_GENRE',
-                                choices: "Pop\nRock\nRap",
-                                description: 'Выберите жанр'
                             ]
                         ]
                     )
 
-                    def artist = userChoice.get('NEW_ARTIST').toString()
-                    def genre = userChoice.get('NEW_GENRE').toString()
-
-                    env.SELECTED_ARTIST = artist
-                    env.SELECTED_GENRE = genre
+                    env.SELECTED_ARTIST = selectedArtist.toString()
 
                     echo "Выбранный исполнитель: ${env.SELECTED_ARTIST}"
-                    echo "Выбранный жанр: ${env.SELECTED_GENRE}"
                 }
             }
         }
