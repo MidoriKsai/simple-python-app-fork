@@ -71,7 +71,6 @@ pipeline {
         }
 
         stage('Input') {
-
             input {
                 message 'Выберите любимого исполнителя'
                 ok 'Продолжить'
@@ -91,7 +90,7 @@ pipeline {
 
             steps {
                 script {
-                    env.SELECTED_ARTIST = env.NEW_ARTIST
+                    env.SELECTED_ARTIST = NEW_ARTIST
                 }
 
                 echo "Выбранный исполнитель: ${env.SELECTED_ARTIST}"
