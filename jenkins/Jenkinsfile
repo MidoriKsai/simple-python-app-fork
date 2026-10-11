@@ -76,19 +76,16 @@ pipeline {
                         message: 'Выберите любимого исполнителя',
                         ok: 'Продолжить',
                         parameters: [
-                            choice(
+                            [
+                                $class: 'ChoiceParameterDefinition',
                                 name: 'NEW_ARTIST',
-                                choices: [
-                                    'Artur Pirozhkov',
-                                    'Рокеры',
-                                    'Попсы'
-                                ],
+                                choices: "Artur Pirozhkov\nРокеры\nПопсы",
                                 description: 'Выберите новое значение'
-                            )
+                            ]
                         ]
                     )
 
-                    env.SELECTED_ARTIST = selectedArtist
+                    env.SELECTED_ARTIST = selectedArtist.toString()
 
                     echo "Выбранный исполнитель: ${env.SELECTED_ARTIST}"
                 }
