@@ -29,6 +29,8 @@ pipeline {
         FAVORITE_SONG = 'Чика'
 
         ARTIST_CREDENTIALS = credentials('artist-credentials')
+
+        SELECTED_ARTIST = ''
     }
 
     stages {
@@ -64,6 +66,38 @@ pipeline {
                     echo "Повторная попытка — успешно"
                     rm -f .retry_test
                 '''
+            }
+        }
+
+        stage('Input') {
+            steps {
+                script {
+                    def selectedArtist = input(
+                        message: 'Выберите любимого исполнителя',
+                        ok: 'Продолжить',
+                        parameters: [
+                            choice(
+                                name: 'NEW_ARTIST',
+                                choices: [
+                                    'Artur Pirozhkov',
+                                    'Рокеры',
+                                    'Попсы'
+                                ],
+                                description: 'Выберите новое значение'
+                            )
+                        ]
+                    )
+
+                    env.SELECTED_ARTIST = selectedArtist
+
+                    echo "Выбранный исполнитель: ${env.SELECTED_ARTIST}"
+                }
+            }
+        }
+
+        stage('After Input') {
+            steps {
+                echo "Дальнейшие стадии используют: ${env.SELECTED_ARTIST}"
             }
         }
     }
