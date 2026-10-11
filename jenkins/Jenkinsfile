@@ -1,24 +1,34 @@
 pipeline {
     agent any
 
-    environment {
-        FAVORITE_ARTIST = 'Artur Pirozhkov'
-        FAVORITE_SONG = 'Чика'
-        FAVORITE_GENRE = 'Pop'
+    options {
+        timeout(time: 3, unit: 'MINUTES')
+    }
 
-        ARTIST_CREDENTIALS = credentials('artist-credentials')
+    environment {
+        ...
     }
 
     stages {
         stage('Show environment') {
-            steps {
-                echo "FAVORITE_ARTIST = ${env.FAVORITE_ARTIST}"
-                echo "FAVORITE_SONG = ${env.FAVORITE_SONG}"
-                echo "FAVORITE_GENRE = ${env.FAVORITE_GENRE}"
+            ...
+        }
 
+        stage('Retry Demo') {
+            options {
+                retry(2)
+            }
+
+            steps {
                 sh '''
-                    echo "Username = $ARTIST_CREDENTIALS_USR"
-                    echo "Password = $ARTIST_CREDENTIALS_PSW"
+                    if [ ! -f .retry_test ]; then
+                        echo "Первая попытка — ошибка"
+                        touch .retry_test
+                        exit 1
+                    fi
+
+                    echo "Повторная попытка — успешно"
+                    rm -f .retry_test
                 '''
             }
         }
