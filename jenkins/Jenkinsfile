@@ -1,21 +1,24 @@
 pipeline {
-    // Агент (agent) указывает, где будет выполняться pipeline.
-    // 'any' - означает запуск на любом доступном агенте.
-    agent {
-        docker { image 'dh-mirror.gitverse.ru/python:3.13.7-alpine3.22' }
-        }
+    agent any
 
-    // Блок stages содержит последовательность этапов выполнения.
+    environment {
+        FAVORITE_ARTIST = 'Artur Pirozhkov'
+        FAVORITE_SONG = 'Чика'
+        FAVORITE_GENRE = 'Pop'
+
+        ARTIST_CREDENTIALS = credentials('artist-credentials')
+    }
+
     stages {
-        // Stage 1 - первый этап pipeline
-        stage('Build') {
-            // Блок steps содержит конкретные действия/команды
+        stage('Show environment') {
             steps {
-            // открываем виртуальное окружение для Python, это нужно чтобы был доступ сохранить зависимости из файла requirements.txt
+                echo "FAVORITE_ARTIST = ${env.FAVORITE_ARTIST}"
+                echo "FAVORITE_SONG = ${env.FAVORITE_SONG}"
+                echo "FAVORITE_GENRE = ${env.FAVORITE_GENRE}"
+
                 sh '''
-                python -m venv venv
-                . venv/bin/activate 
-                pip install -r requirements.txt
+                    echo "Username = $ARTIST_CREDENTIALS_USR"
+                    echo "Password = $ARTIST_CREDENTIALS_PSW"
                 '''
             }
         }
