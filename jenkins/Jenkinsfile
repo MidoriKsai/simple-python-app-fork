@@ -6,12 +6,25 @@ pipeline {
     }
 
     environment {
-        ...
+        FAVORITE_ARTIST = 'Artur Pirozhkov'
+        FAVORITE_SONG = 'Чика'
+        FAVORITE_GENRE = 'Pop'
+
+        ARTIST_CREDENTIALS = credentials('artist-credentials')
     }
 
     stages {
         stage('Show environment') {
-            ...
+            steps {
+                echo "FAVORITE_ARTIST = ${env.FAVORITE_ARTIST}"
+                echo "FAVORITE_SONG = ${env.FAVORITE_SONG}"
+                echo "FAVORITE_GENRE = ${env.FAVORITE_GENRE}"
+
+                sh '''
+                    echo "Username = $ARTIST_CREDENTIALS_USR"
+                    echo "Password = $ARTIST_CREDENTIALS_PSW"
+                '''
+            }
         }
 
         stage('Retry Demo') {
