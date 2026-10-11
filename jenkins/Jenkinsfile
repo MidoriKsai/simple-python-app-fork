@@ -93,9 +93,45 @@ pipeline {
                         ]
                     )
 
-                    echo "INPUT RESULT = ${userChoice}"
-                    echo "INPUT CLASS = ${userChoice?.getClass()?.getName()}"
+                    def artist = userChoice.get('NEW_ARTIST').toString()
+                    def genre = userChoice.get('NEW_GENRE').toString()
+
+                    env.SELECTED_ARTIST = artist
+                    env.SELECTED_GENRE = genre
+
+                    echo "Выбранный исполнитель: ${env.SELECTED_ARTIST}"
+                    echo "Выбранный жанр: ${env.SELECTED_GENRE}"
                 }
+            }
+        }
+
+        stage('Rockers') {
+            when {
+                environment name: 'SELECTED_ARTIST', value: 'Рокеры'
+            }
+
+            steps {
+                echo 'Играет рок-группа!'
+            }
+        }
+
+        stage('Pop') {
+            when {
+                environment name: 'SELECTED_ARTIST', value: 'Попсы'
+            }
+
+            steps {
+                echo 'Играет поп-группа!'
+            }
+        }
+
+        stage('Artur Pirozhkov') {
+            when {
+                environment name: 'SELECTED_ARTIST', value: 'Artur Pirozhkov'
+            }
+
+            steps {
+                echo 'Играет Artur Pirozhkov!'
             }
         }
     }
