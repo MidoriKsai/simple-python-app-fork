@@ -1,3 +1,6 @@
+def selectedArtist = ''
+def selectedGenre = ''
+
 pipeline {
     agent any
 
@@ -29,8 +32,6 @@ pipeline {
         FAVORITE_SONG = 'Чика'
 
         ARTIST_CREDENTIALS = credentials('artist-credentials')
-
-        SELECTED_ARTIST = ''
     }
 
     stages {
@@ -73,8 +74,8 @@ pipeline {
         stage('Input') {
             steps {
                 script {
-                    def selectedArtist = input(
-                        message: 'Измените любимого исполнителя',
+                    def result = input(
+                        message: 'Измените параметры',
                         ok: 'Продолжить',
                         parameters: [
                             [
@@ -82,20 +83,36 @@ pipeline {
                                 name: 'NEW_ARTIST',
                                 choices: "Artur Pirozhkov\nРокеры\nПопсы",
                                 description: 'Выберите любимого исполнителя'
+                            ],
+                            [
+                                $class: 'ChoiceParameterDefinition',
+                                name: 'NEW_GENRE',
+                                choices: "Pop\nRock\nRap",
+                                description: 'Выберите жанр'
                             ]
                         ]
                     )
 
-                    env.SELECTED_ARTIST = selectedArtist.toString()
+                    echo "INPUT RESULT = ${result}"
 
-                    echo "Выбранный исполнитель: ${env.SELECTED_ARTIST}"
+                    if (result == null) {
+                        error 'Input не вернул значения'
+                    }
+
+                    selectedArtist = result.get('NEW_ARTIST')
+                    selectedGenre = result.get('NEW_GENRE')
+
+                    echo "Выбранный исполнитель: ${selectedArtist}"
+                    echo "Выбранный жанр: ${selectedGenre}"
                 }
             }
         }
 
         stage('Rockers') {
             when {
-                environment name: 'SELECTED_ARTIST', value: 'Рокеры'
+                expression {
+                    selectedArtist == 'Рокеры'
+                }
             }
 
             steps {
@@ -105,7 +122,9 @@ pipeline {
 
         stage('Pop') {
             when {
-                environment name: 'SELECTED_ARTIST', value: 'Попсы'
+                expression {
+                    selectedArtist == 'Попсы'
+                }
             }
 
             steps {
@@ -115,7 +134,9 @@ pipeline {
 
         stage('Artur Pirozhkov') {
             when {
-                environment name: 'SELECTED_ARTIST', value: 'Artur Pirozhkov'
+                expression {
+                    selectedArtist == 'Artur Pirozhkov'
+                }
             }
 
             steps {
