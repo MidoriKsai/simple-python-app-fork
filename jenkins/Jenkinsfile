@@ -5,10 +5,24 @@ pipeline {
         timeout(time: 3, unit: 'MINUTES')
     }
 
+    parameters {
+        string(
+            name: 'ВАШ_ЛЮБИМЫЙ_ИСПОЛНИТЕЛЬ',
+            defaultValue: 'Artur Pirozhkov',
+            description: 'Введите любимого исполнителя'
+        )
+
+        choice(
+            name: 'ЖАНР',
+            choices: ['Pop', 'Rock', 'Rap'],
+            description: 'Выберите музыкальный жанр'
+        )
+    }
+
     environment {
-        FAVORITE_ARTIST = 'Artur Pirozhkov'
+        FAVORITE_ARTIST = "${params['ВАШ_ЛЮБИМЫЙ_ИСПОЛНИТЕЛЬ']}"
+        FAVORITE_GENRE = "${params['ЖАНР']}"
         FAVORITE_SONG = 'Чика'
-        FAVORITE_GENRE = 'Pop'
 
         ARTIST_CREDENTIALS = credentials('artist-credentials')
     }
@@ -17,8 +31,11 @@ pipeline {
         stage('Show environment') {
             steps {
                 echo "FAVORITE_ARTIST = ${env.FAVORITE_ARTIST}"
-                echo "FAVORITE_SONG = ${env.FAVORITE_SONG}"
                 echo "FAVORITE_GENRE = ${env.FAVORITE_GENRE}"
+                echo "FAVORITE_SONG = ${env.FAVORITE_SONG}"
+
+                echo "PARAM ARTIST = ${params['ВАШ_ЛЮБИМЫЙ_ИСПОЛНИТЕЛЬ']}"
+                echo "PARAM GENRE = ${params['ЖАНР']}"
 
                 sh '''
                     echo "Username = $ARTIST_CREDENTIALS_USR"
