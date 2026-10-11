@@ -2,7 +2,12 @@ def selectedArtist = ''
 def selectedGenre = ''
 
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'dh-mirror.gitverse.ru/python:3.13.7-alpine3.22'
+            args '--user root'
+        }
+    }
 
     options {
         timeout(time: 3, unit: 'MINUTES')
@@ -93,12 +98,6 @@ pipeline {
                         ]
                     )
 
-                    echo "INPUT RESULT = ${result}"
-
-                    if (result == null) {
-                        error 'Input не вернул значения'
-                    }
-
                     selectedArtist = result.get('NEW_ARTIST')
                     selectedGenre = result.get('NEW_GENRE')
 
@@ -141,6 +140,16 @@ pipeline {
 
             steps {
                 echo 'Играет Artur Pirozhkov!'
+            }
+        }
+
+        stage('Setup') {
+            steps {
+                sh '''
+                    python -m venv venv
+                    . venv/bin/activate
+                    pip install -r requirements.txt
+                '''
             }
         }
     }
