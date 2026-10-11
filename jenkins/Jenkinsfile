@@ -31,6 +31,7 @@ pipeline {
         ARTIST_CREDENTIALS = credentials('artist-credentials')
 
         SELECTED_ARTIST = ''
+        SELECTED_GENRE = ''
     }
 
     stages {
@@ -71,29 +72,40 @@ pipeline {
         }
 
         stage('Input') {
-            input {
-                message 'Выберите любимого исполнителя'
-                ok 'Продолжить'
-
-                parameters {
-                    choice(
-                        name: 'NEW_ARTIST',
-                        choices: [
-                            'Artur Pirozhkov',
-                            'Рокеры',
-                            'Попсы'
-                        ],
-                        description: 'Выберите новое значение'
-                    )
-                }
-            }
-
             steps {
                 script {
-                    env.SELECTED_ARTIST = NEW_ARTIST
-                }
+                    def userChoice = input(
+                        message: 'Измените параметры',
+                        ok: 'Продолжить',
+                        parameters: [
+                            choice(
+                                name: 'NEW_ARTIST',
+                                choices: [
+                                    'Artur Pirozhkov',
+                                    'Рокеры',
+                                    'Попсы'
+                                ],
+                                description: 'Выберите любимого исполнителя'
+                            ),
 
-                echo "Выбранный исполнитель: ${env.SELECTED_ARTIST}"
+                            choice(
+                                name: 'NEW_GENRE',
+                                choices: [
+                                    'Pop',
+                                    'Rock',
+                                    'Rap'
+                                ],
+                                description: 'Выберите жанр'
+                            )
+                        ]
+                    )
+
+                    env.SELECTED_ARTIST = userChoice['NEW_ARTIST']
+                    env.SELECTED_GENRE = userChoice['NEW_GENRE']
+
+                    echo "Выбранный исполнитель: ${env.SELECTED_ARTIST}"
+                    echo "Выбранный жанр: ${env.SELECTED_GENRE}"
+                }
             }
         }
 
